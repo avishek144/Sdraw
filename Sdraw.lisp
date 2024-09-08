@@ -1,8 +1,24 @@
-(defpackage sdraw
-  (:documentation "SDRAW - draws cons cell structures")
-  (:use "CL"))
+;; Sdraw.lisp -- This file contains the SDRAW package.
+;; Copyright (C) 2024 by Avishek Gorai <avishekgorai@myyahoo.com>
+;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;(use-package '("CL") "SDRAW")
+(defpackage "SDRAW"
+  (:documentation
+   "SDRAW - This package contains user-level functions SDRAW, SCRAWL and
+SDRAW-LOOP.")
+  (:use "COMMON-LISP-USER"))
 
 ;;; -*- Mode: Lisp; Package SDRAW -*-
 ;;;
@@ -20,7 +36,7 @@
 
 (in-package "SDRAW")
 
-(export '(sdraw sdraw-loop scrawl))
+(export (quote (sdraw sdraw-loop scrawl)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -53,16 +69,15 @@
 ;;; SDRAW and subordinate definitions.
 
 (defun sdraw (obj)
-  "Draws the given object on the terminal."
+  "Draws the given object on terminal using cons cell notation."
   (fill *line-endings* most-negative-fixnum)
   (draw-structure (struct1 obj 0 0 nil))
   (values))
 
 (defun struct1 (obj row root-col obj-memory)
-  "Structure 1 ???"
   (cond ((atom obj)
 	 (struct-process-atom (format nil "~S" obj) row root-col))
-	((member obj obj-memory :test #'eq)
+	((member obj obj-memory :test (function eq))
 	 (struct-process-circ row root-col))
 	((>= row *sdraw-vertical-cutoff*)
 	 (struct-process-etc row root-col))
@@ -70,32 +85,28 @@
 				(cons obj obj-memory)))))
 
 (defun struct-process-atom (atom-string row root-col)
-  "Process an atom of a structure???"
   (let* ((start-col (struct-find-start row root-col))
 	 (end-col (+ start-col (length atom-string))))
     (cond ((< end-col *sdraw-horizontal-atom-cutoff*)
 	   (struct-record-position row end-col)
-	   (list 'atom row start-col atom-string))
+	   (list (quote atom) row start-col atom-string))
 	  (t (struct-process-etc row root-col)))))
 
 (defun struct-process-etc (row root-col)
-  "Process et cetra of structure???"
   (let ((start-col (struct-find-start row root-col)))
     (struct-record-position
      row
      (+ start-col (length *etc-string*) *etc-spacing*))
-    (list 'msg row start-col *etc-string*)))
+    (list (quote msg) row start-col *etc-string*)))
 
 (defun struct-process-circ (row root-col)
-  "Processes circular lists???"
   (let ((start-col (struct-find-start row root-col)))
     (struct-record-position
      row
      (+ start-col (length *circ-string*) *circ-spacing*))
-    (list 'msg row start-col *circ-string*)))
+    (list (quote msg) row start-col *circ-string*)))
 
 (defun struct-process-cons (obj row root-col obj-memory)
-  "Process cons cell??"
   (let* ((cons-start (struct-find-start row root-col))
 	 (car-structure
 	   (struct1 (car obj)
@@ -104,18 +115,16 @@
 	 (start-col (third car-structure)))
     (if (>= start-col *sdraw-horizontal-cons-cutoff*)
 	(struct-process-etc row root-col)
-	(list 'cons row start-col car-structure
+	(list (quote cons) row start-col car-structure
 	      (struct1 (cdr obj) row
 		       (+ start-col *cons-atom-h-arrow-length*)
 		       obj-memory)))))
 
 (defun struct-find-start (row root-col)
-  "Find start of the given structure???"
   (max root-col (+ *inter-atom-h-spacing*
 		   (aref *line-endings* row))))
 
 (defun struct-record-position (row end-col)
-  "Record position of structure???"
   (setf (aref *line-endings* row) end-col))
 
 
@@ -136,7 +145,7 @@
 (defparameter *sdraw-loop-prompt-string* "S> ")
 
 (defun sdraw-loop ()
-  "Read-eval-print loop using sdraw to display result."
+  "Read-eval-print loop which uses SDRAW to display results in cons cell diagram."
   (format t "~&Type any Lisp expression, or (ABORT) to exit.~%~%")
   (sdl1))
 
@@ -169,7 +178,7 @@
 	 (full-text (format nil "Result: ~S" result))
 	 (text (if (> (length full-text)
 		      *sdraw-display-width*)
-		   (concatenate 'string
+		   (concatenate (quote string)
 				(subseq full-text 0 (- *sdraw-display-width* 4))
 				"...)")
 		   full-text)))
@@ -191,7 +200,7 @@
 (defvar *extracting-sequence* nil)
 
 (defun scrawl (obj)
-  "Read-eval-print loop to travel through the list."
+  "Read-eval-print loop to travel around the list."
   (format t "~&Crawl through list: 'H' for help, 'Q' to quit.~%~%")
   (setf *scrawl-object* obj)
   (setf *scrawl-current-obj* obj)
@@ -214,7 +223,7 @@
 
 (defun scrawl-car-cmd ()
   (cond ((consp *scrawl-current-obj*)
-	 (push 'car *extracting-sequence*)
+	 (push (quote car) *extracting-sequence*)
 	 (setf *scrawl-current-obj* (car *scrawl-current-obj*)))
 	(t (format t
 		   "~&Can't take CAR or CDR of an atom. Use B to back up.~%")))
@@ -222,7 +231,7 @@
 
 (defun scrawl-cdr-cmd ()
   (cond ((consp *scrawl-current-obj*)
-	 (push 'cdr *extracting-sequence*)
+	 (push (quote cdr) *extracting-sequence*)
 	 (setf *scrawl-current-obj* (cdr *scrawl-current-obj*)))
 	(t (format t
 		   "~&Can't take CAR or CDR of an atom. Use B to back up.~%")))
@@ -242,19 +251,20 @@
   (display-scrawl-result))
 
 (defun extract-obj (seq obj)
-  (reduce #'funcall
+  (reduce (function funcall)
 	  seq
 	  :initial-value obj
 	  :from-end t))
 
 (defun get-car/cdr-string ()
   (if (null *extracting-sequence*)
-      (format nil "'~S" *scrawl-object*)
-      (format nil "(c~Ar '~S)"
-	      (map 'string #'(lambda (x)
+      (format nil "(quote ~S)" *scrawl-object*)
+      (format nil "(c~Ar (quote ~S))"
+	      (map (quote string)
+                   (function (lambda (x)
 			       (ecase x
 				 (car #\a)
-				 (cdr #\d)))
+				 (cdr #\d))))
 		   *extracting-sequence*)
 	      *scrawl-object*)))
 
@@ -264,7 +274,7 @@
 				(*print-circle* t))
   (let* ((extract-string (get-car/cdr-string))
 	 (text (if (> (length extract-string) *sdraw-display-width*)
-		   (concatenate 'string
+		   (concatenate (quote string)
 				(subseq extract-string 0
 					(- *sdraw-display-width* 4))
 				"...)")
@@ -302,7 +312,7 @@
 (eval-when (eval load)
   (dotimes (i *sdraw-num-lines*)
     (setf (aref *textline-array* i)
-	  (make-array *sdraw-display-width* :element-type 'standard-char))))
+	  (make-array *sdraw-display-width* :element-type (quote standard-char)))))
 
 (defun char-blt (row start-col string)
   "Maybe character blit function???"
@@ -314,9 +324,8 @@
     (replace line string :start1 start-col)
     (setf (aref *textline-lengths* row)
 	  (+ start-col (length string)))))
-			
+
 (defun follow-directions (dirs &optional is-car)
-  "It follows directions maybe???"
   (ecase (car dirs)
     (cons (draw-cons dirs))
     ((atom msg) (draw-msg (second dirs)
@@ -325,7 +334,6 @@
 			  is-car))))
 
 (defun draw-cons (obj)
-  "Maybe it draws cons cells???"
   (let* ((row (second obj))
 	 (col (third obj))
 	 (car-component (fourth obj))
@@ -345,7 +353,6 @@
     (follow-directions cdr-component)))
 
 (defun dump-display ()
-  "Dump the display???"
   (terpri)
   (dotimes (i *sdraw-num-lines*)
     (let ((len (aref *textline-lengths* i)))
@@ -356,7 +363,6 @@
   (terpri))
 
 (defun draw-msg (row col string is-car)
-  "Draw message????"
   (char-blt row
 	    (+ col (if (and is-car
 			    (<= (length string)
@@ -366,7 +372,6 @@
 	    string))
 
 (defun draw-structure (directions)
-  "Draw the structure????"
   (fill *textline-lengths* 0)
   (follow-directions directions)
   (dump-display))
