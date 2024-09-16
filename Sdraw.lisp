@@ -16,18 +16,20 @@
 
 (defpackage "SDRAW"
   (:documentation
-   "SDRAW - This package contains user-level functions SDRAW, SCRAWL and
-SDRAW-LOOP.")
+   "SDRAW - This package contains user-level functions SDRAW,
+SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
+
+  (:export (quote
+            (sdraw sdraw-loop scrawl)))
+
   (:use "COMMON-LISP-USER"))
 
-;;; -*- Mode: Lisp; Package SDRAW -*-
+;;; -*- Mode: Lisp; Package: SDRAW -*-
 ;;;
-;;; SDRAW - draws cons cell structures
+;;; SDRAW - draws cons cell structures.
 ;;; From the book "Common Lisp: A Gentle Introduction to
 ;;;      Symbolic Computation" by David S. Touretzky.
 ;;; The Benjamin/Cummings Publishing Co., 1989.
-;;;
-;;; With a little documentation added from me!
 ;;;
 ;;; User-level routines:
 ;;; (SDRAW object)  - draws given object on the terminal
@@ -36,12 +38,10 @@ SDRAW-LOOP.")
 
 (in-package "SDRAW")
 
-(export (quote (sdraw sdraw-loop scrawl)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; The parameters below are in units of characters (horizontal)
-;;; and lines (vertical). They apply to all versions of SDRAW,
+;;; and lines (vertical).  They apply to all versions of SDRAW,
 ;;; but their values may change if cons cells are being drawn as
 ;;; bit maps rather than character sequences.
 
