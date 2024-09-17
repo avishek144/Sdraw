@@ -1,4 +1,4 @@
-;; Sdraw.lisp -- This file contains the SDRAW package.
+;; Sdraw.lisp -- Draws cons cell diagrams.
 ;; Copyright (C) 2024 by Avishek Gorai <avishekgorai@myyahoo.com>
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,7 @@
    "SDRAW - This package contains user-level functions SDRAW,
 SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
 
-  (:export (quote
-            (sdraw sdraw-loop scrawl)))
-
-  (:use "COMMON-LISP-USER"))
+  (:use "COMMON-LISP-USER" "COMMON-LISP"))
 
 ;;; -*- Mode: Lisp; Package: SDRAW -*-
 ;;;
@@ -37,6 +34,8 @@ SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
 ;;; (SCRAWL object) - interactively crawl around the given object
 
 (in-package "SDRAW")
+
+(export (quote (sdraw::sdraw sdraw::sdraw-loop sdraw::scrawl)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
