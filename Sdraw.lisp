@@ -1,18 +1,19 @@
-;; Sdraw.lisp -- Draws cons cell diagrams.
-;; Copyright (C) 2024 by Avishek Gorai <avishekgorai@myyahoo.com>
-;;
-;; This program is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;;; Sdraw.lisp -- Draws cons cell diagrams.
+;;; Copyright (C) 2024 by Avishek Gorai <avishekgorai@myyahoo.com>
+;;;
+;;; This program is free software: you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation, either version 3 of the License, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 
 (defpackage "SDRAW"
   (:documentation
@@ -20,18 +21,6 @@
 SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
 
   (:use "COMMON-LISP-USER" "COMMON-LISP"))
-
-;;; -*- Mode: Lisp; Package: SDRAW -*-
-;;;
-;;; SDRAW - draws cons cell structures.
-;;; From the book "Common Lisp: A Gentle Introduction to
-;;;      Symbolic Computation" by David S. Touretzky.
-;;; The Benjamin/Cummings Publishing Co., 1989.
-;;;
-;;; User-level routines:
-;;; (SDRAW object)  - draws given object on the terminal
-;;; (SDRAW-LOOP) - puts the user in a read-eval-draw loop
-;;; (SCRAWL object) - interactively crawl around the given object
 
 (in-package "SDRAW")
 
@@ -68,7 +57,9 @@ SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
 ;;; SDRAW and subordinate definitions.
 
 (defun sdraw (obj)
-  "Draws the given object on terminal using cons cell notation."
+  "(SDRAW object)
+
+Draws the given object on terminal using cons cell notation."
   (fill *line-endings* most-negative-fixnum)
   (draw-structure (struct1 obj 0 0 nil))
   (values))
@@ -141,10 +132,13 @@ SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
 ;;;
 ;;; SDRAW-LOOP and subordinate definitions.
 
-(defparameter *sdraw-loop-prompt-string* "S> ")
+(defparameter *sdraw-loop-prompt-string* "SDRAW-LOOP> "
+  "Prompt string for SDRAW-LOOP.")
 
 (defun sdraw-loop ()
-  "Read-eval-print loop which uses SDRAW to display results in cons cell diagram."
+  "(SDRAW-LOOP)
+
+Read-eval-print loop which uses SDRAW to display results in cons cell diagram."
   (format t "~&Type any Lisp expression, or (ABORT) to exit.~%~%")
   (sdl1))
 
@@ -199,7 +193,9 @@ SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
 (defvar *extracting-sequence* nil)
 
 (defun scrawl (obj)
-  "Read-eval-print loop to travel around the list."
+  "(SCRAWL object)
+
+Read-eval-print loop to travel around the list."
   (format t "~&Crawl through list: 'H' for help, 'Q' to quit.~%~%")
   (setf *scrawl-object* obj)
   (setf *scrawl-current-obj* obj)
