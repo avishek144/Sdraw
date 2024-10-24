@@ -20,7 +20,7 @@
    "SDRAW - This package contains user-level functions SDRAW,
 SCRAWL and SDRAW-LOOP.  Which draws cons cell diagrams.")
 
-  (:use "COMMON-LISP-USER" "COMMON-LISP"))
+  (:use "COMMON-LISP"))
 
 (in-package "SDRAW")
 
